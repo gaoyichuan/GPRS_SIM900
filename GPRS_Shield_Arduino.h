@@ -36,35 +36,33 @@
 
 /** GPRS class.
  *  used to realize GPRS communication
- */ 
- 
+ */
+
 enum Protocol {
     CLOSED = 0,
-    TCP    = 1,
-    UDP    = 2,
+    TCP = 1,
+    UDP = 2,
 };
- 
-class GPRS
-{
-public:
+
+class GPRS {
+  public:
     /** Create GPRS instance
      *  @param number default phone number during mobile communication
      */
-	GPRS(uint8_t tx,  uint8_t rx, uint32_t baudRate = 9600 ); 
-    
+    GPRS(uint8_t serial, uint8_t tx, uint8_t rx, uint32_t baudRate = 9600);
+
     /** get instance of GPRS class
      */
-    static GPRS* getInstance() {
+    static GPRS *getInstance() {
         return inst;
     };
-    
+
     /** initialize GPRS module including SIM card check & signal strength
      *  @return true if connected, false otherwise
      */
 
     bool init(void);
 
-   
     /** check if GPRS module is powered on or not
      *  @returns
      *      true on success
@@ -72,19 +70,18 @@ public:
      */
     bool checkPowerUp(void);
 
-    
     /** power Up GPRS module (JP has to be soldered)
      *  @param  pin pin 9 connected to JP jumper so we can power up and down through software
      *  @returns
      *      
      */
-    void powerUpDown(uint8_t pin = 9);  
-    
+    void powerUpDown(uint8_t pin = 9);
+
     /** power reset for SIM800 board 
      *  @param  pin (preconfigurated as OUTPUT)
      *  @returns
      *      
-     */	
+     */
     void powerReset(uint8_t pin);
     /** Check network registration status
      *  @return true on success, false on fail
@@ -97,7 +94,7 @@ public:
      *        false for no SIM detected
      */
     bool checkSIMStatus(void);
-          
+
     /** send text SMS
      *  @param  *number phone number which SMS will be send to
      *  @param  *data   message that will be send to
@@ -105,7 +102,7 @@ public:
      *      true on success
      *      false on error
      */
-    bool sendSMS(const char* number, const char* data);
+    bool sendSMS(const char *number, const char *data);
 
     /** Check if there is any UNREAD SMS: this function DOESN'T change the UNREAD status of the SMS
      *  @returns
@@ -114,8 +111,8 @@ public:
      *       0 - there is no SMS with specified status (UNREAD)
      */
 
-	char isSMSunread();
-    
+    char isSMSunread();
+
     /** read SMS, phone and date if getting a SMS message. It changes SMS status to READ 
      *  @param  messageIndex  SIM position to read
      *  @param  message  buffer used to get SMS message
@@ -126,7 +123,7 @@ public:
      *      true on success
      *      false on error
      */
-    bool readSMS(int messageIndex, char *message, int length, char *phone, char *datetime); 
+    bool readSMS(int messageIndex, char *message, int length, char *phone, char *datetime);
 
     /** read SMS if getting a SMS message
      *  @param  buffer  buffer that get from GPRS module(when getting a SMS, GPRS module will return a buffer array)
@@ -152,19 +149,19 @@ public:
      *      true on success
      *      false on error
      */
-    bool callUp(char* number);
+    bool callUp(char *number);
 
     /** auto answer if coming a call
      *  @returns
-     */    
+     */
     void answer(void);
-    
+
     /** hang up if coming a call
      *  @returns
      *      true on success
      *      false on error
-     */    
-    bool hangup(void);  
+     */
+    bool hangup(void);
 
     /** Disable +CLIP notification when an incoming call is active, RING text is always shown. See isCallActive function
      *  This is done in order no to overload serial outputCheck if there is a call active and get the phone number in that case
@@ -173,8 +170,8 @@ public:
      *      false on error
      */
     bool disableCLIPring(void);
-	
-	/** Get Subscriber Number (your number) using AT+CNUM command, but if nothing returns, then
+
+    /** Get Subscriber Number (your number) using AT+CNUM command, but if nothing returns, then
 	 *  you need to command this to your SIM900. (See AT+CPBS, AT+CPBW)
 	 *	AT+CPBS="ON"
 	 *	AT+CPBW=1,"+{Your Number}",145
@@ -184,14 +181,14 @@ public:
 	 *		true on success
 	 *		false on error
 	 */
-	bool getSubscriberNumber(char *number);
-    
-	/** Check if there is a call active and get the phone number in that case
+    bool getSubscriberNumber(char *number);
+
+    /** Check if there is a call active and get the phone number in that case
      *  @returns
      *      true on success
      *      false on error
      */
-    bool isCallActive(char *number);  
+    bool isCallActive(char *number);
 
     /** get DateTime from SIM900 (see AT command: AT+CLTS=1) as string
      *  @param
@@ -212,7 +209,7 @@ public:
 	 *
      */
     bool getDateTime(char *buffer);
-	
+
     /** get battery voltage from SIM900 in mV
      *  @param
      *  @returns
@@ -220,15 +217,15 @@ public:
      *      false on error
      */
     bool getVcc(char *buffer);
-    
-	/** get Signal Strength from SIM900 (see AT command: AT+CSQ) as integer
+
+    /** get Signal Strength from SIM900 (see AT command: AT+CSQ) as integer
 	*  @param
 	*  @returns
 	*      true on success
 	*      false on error
 	*/
-	bool getSignalStrength(int *buffer);
-    
+    bool getSignalStrength(int *buffer);
+
     /** Send USSD Command Synchronously (Blocking call until unsolicited response is received)
      *  @param
 	 *		*ussdCommand string command UUSD, ex: *123#
@@ -238,17 +235,17 @@ public:
      *  @returns
      *      true on success
      *      false on error
-     */  
-	bool sendUSSDSynchronous(char *ussdCommand, char *resultcode, char *response);
+     */
+    bool sendUSSDSynchronous(char *ussdCommand, char *resultcode, char *response);
 
     /** Cancel USSD Session
      *  @returns
      *      true on success cancel active session
      *      false on error or because no active session
      */
-	bool cancelUSSDSession(void);
-	
-	/** Get number and name from the phone book
+    bool cancelUSSDSession(void);
+
+    /** Get number and name from the phone book
      *  @param  index	phone book position
      *  @param  number	buffer used to get the number
      *  @param	type	buffer used to get the type of the number e.g. national(129/161), international(145), network specific(177)	refer to: http://m2msupport.net/m2msupport/sim-phonebook-at-commands/
@@ -257,17 +254,17 @@ public:
      *      true on success
      *      false on error or entry didn't exist
      */
-	bool getBookEntry(int index, char* number, int *type, char *name);
-	
-	/** Delete phone book entry
+    bool getBookEntry(int index, char *number, int *type, char *name);
+
+    /** Delete phone book entry
 	 *  @param  index	phone book position
      *  @returns
      *      true on success or entry didn't exist 
      *      false on error
      */
-	bool delBookEntry(int index);
-	
-	/** Add number and name to the phone book
+    bool delBookEntry(int index);
+
+    /** Add number and name to the phone book
      *  @param  index	phone book position -1 for choosing the next free index
      *  @param  number	buffer used to add the number
      *  @param	type	buffer used to add the type of the number e.g. national(129/161), international(145), network specific(177)	refer to: http://m2msupport.net/m2msupport/sim-phonebook-at-commands/
@@ -276,39 +273,39 @@ public:
      *      true on success
      *      false on error
      */
-	bool addBookEntry(int index, const char* number, int type, const char *name);
+    bool addBookEntry(int index, const char *number, int type, const char *name);
 
-//////////////////////////////////////////////////////
-/// SLEEP
-////////////////////////////////////////////////////// 	
+    //////////////////////////////////////////////////////
+    /// SLEEP
+    //////////////////////////////////////////////////////
     /** Enter sleep mode (AT+CSCLK=2)
      *  @returns
      *      true on success
      *      false on error
      */
-	bool sleep(void);	
-	
+    bool sleep(void);
+
     /** Exit sleep mode (AT+CSCLK=0)
      *  @returns
      *      true on success
      *      false on error
      */
-	bool wake(void);		
-	
-//////////////////////////////////////////////////////
-/// GPRS
-//////////////////////////////////////////////////////  
-   /**  Connect the GPRS module to the network.
+    bool wake(void);
+
+    //////////////////////////////////////////////////////
+    /// GPRS
+    //////////////////////////////////////////////////////
+    /**  Connect the GPRS module to the network.
      *  @return true if connected, false otherwise
      */
-	 
+
     bool join(const __FlashStringHelper *apn = 0, const __FlashStringHelper *userName = 0, const __FlashStringHelper *passWord = 0);
 
     /** Disconnect the GPRS module from the network
      *  @returns
      */
     void disconnect(void);
-    
+
     /** Open a tcp/udp connection with the specified host on the specified port
      *  @param socket an endpoint of an inter-process communication flow of GPRS module,for SIM900 module, it is in [0,6]
      *  @param ptl protocol for socket, TCP/UDP can be choosen
@@ -318,19 +315,19 @@ public:
      *  @param chartimeout wait milliseconds between characters from GPRS module
      *  @returns true if successful
      */
-    bool connect(Protocol ptl, const char * host, int port, int timeout = 2 * DEFAULT_TIMEOUT, int chartimeout = 2 * DEFAULT_INTERCHAR_TIMEOUT);
-	bool connect(Protocol ptl, const __FlashStringHelper *host, const __FlashStringHelper *port, int timeout = 2 * DEFAULT_TIMEOUT, int chartimeout = 2 * DEFAULT_INTERCHAR_TIMEOUT);
+    bool connect(Protocol ptl, const char *host, int port, int timeout = 2 * DEFAULT_TIMEOUT, int chartimeout = 2 * DEFAULT_INTERCHAR_TIMEOUT);
+    bool connect(Protocol ptl, const __FlashStringHelper *host, const __FlashStringHelper *port, int timeout = 2 * DEFAULT_TIMEOUT, int chartimeout = 2 * DEFAULT_INTERCHAR_TIMEOUT);
 
     /** Check if a tcp link is active
      *  @returns true if successful
      */
     bool is_connected(void);
-	
-	/** Close a tcp connection
+
+    /** Close a tcp connection
      *  @returns true if successful
      */
     bool close(void);
-	
+
     /** check if GPRS module is readable or not
      *  @returns true if readable
      */
@@ -354,54 +351,55 @@ public:
      *  @param len string length
      *  @returns return bytes that actually been send
      */
-    int send(const char * str, int len);
+    int send(const char *str, int len);
 
     /** send data to socket without AT+CIPSEND=len
      *  @param str string to be sent (from progmem)
      *  @returns true if successful, false if a timeout occured
      */
-    boolean send(const __FlashStringHelper* str);
+    boolean send(const __FlashStringHelper *str);
 
     /** send data to socket without AT+CIPSEND=len
      *  @param socket socket
      *  @param str string to be sent
      *  @returns true if successful
      */
-    boolean send(const char * str);
-	
+    boolean send(const char *str);
+
     /** read data from socket
      *  @param socket socket
      *  @param buf buffer that will store the data read from socket
      *  @param len string length need to read from socket
      *  @returns bytes that actually read
      */
-    int recv(char* buf, int len);
+    int recv(char *buf, int len);
 
     /** Enables the selected software serial port to listen
      *  @returns none
      */
-    void listen(void);
-	
+    // void listen(void);
+
     /** Tests to see if requested software serial port is actively listening.
      *  @returns none
      */
-    bool isListening(void);
+    // bool isListening(void);
 
     /** convert the host to ip
      *  @param host host ip string, ex. 10.11.12.13
      *  @param ip long int ip address, ex. 0x11223344
      *  @returns true if successful
      */
-    //NOT USED bool gethostbyname(const char* host, uint32_t* ip); 
-    
-    char* getIPAddress();
-    unsigned long getIPnumber();	
+    //NOT USED bool gethostbyname(const char* host, uint32_t* ip);
+
+    char *getIPAddress();
+    unsigned long getIPnumber();
     bool getLocation(const __FlashStringHelper *apn, float *longitude, float *latitude);
-    void AT_Bypass();	
-private:    
-    uint32_t str_to_ip(const char* str);
-    SoftwareSerial gprsSerial;
-    static GPRS* inst;
+    void AT_Bypass();
+
+  private:
+    uint32_t str_to_ip(const char *str);
+    HardwareSerial gprsSerial;
+    static GPRS *inst;
     uint32_t _ip;
     char ip_string[16]; //XXX.YYY.ZZZ.WWW + \0
 };
